@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+</head>
+
+<body>
+<!--bar navigator bootstrap-->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto lista">
+            {% if user.username %}
+            <li class="nav-item active"><a class="nav-link" href="{% url 'index' %}"><span><b>Menu</b></span></a></li>
+            <li class="nav-item active"><a class="nav-link" href="{% url 'cart' %}"><span><b>Cart</b></span></a></li>
+            <li class="nav-item active"><a class="nav-link" href="{% url 'my_orders' %}"><span><b>My Orders</b></span></a></li>
+            <li class="nav-item active"><a class="nav-link" href="{% url 'logout' %}"><span><b>Logout</b></span> </a></li>
+
+            {% else %}
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'register' %}"><span><b>Register</b></span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'login' %}"><span><b>Login</b></span> </a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+{% if messages %}
+<div class="alert alert-success text-center alert-dismissible fade show" role="alert">
+    <ul class="messages" style="list-style: none;">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+            {% endfor %}
+    </ul>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endif %}
+
+{% if message_success %}
+<div class="alert alert-success text-center alert-dismissible fade show" role="alert">
+    {{message_success}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endif %}
+
+{% if message_alert %}
+<div class="alert alert-danger text-center alert-dismissible fade show" role="alert">
+    {{message_alert}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endif %}
+{% block body %}{% endblock %}
+
+
+<!--BS JS-->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="{% static 'js/index.js' %}"></script>
+
+<script>
+
+    $("input:checkbox").click(function () {
+        var toppingcount = $("input:checkbox:checked").length;
+
+        var bol = toppingcount >= '{{extra_allowed_count}}';
+
+        $("input:checkbox").not(":checked").attr("disabled", bol);
+    });
+</script>
+</body>
+
+</html>

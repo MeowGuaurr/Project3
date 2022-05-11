@@ -1,0 +1,146 @@
+{% extends "orders/base.html" %}
+
+{% block title %}
+Cart
+{% endblock %}
+
+{% block body %}
+
+<div class="card mt-5">
+    <div class="card-header">
+        <div class="dropdown-divider title"></div>
+        <h2 class="text-center">My Cart</h2>
+    </div>
+    {% if cart_item_count > 0 %}
+    <div class="card-body">
+        <div class="card-text">
+            <div class="table-wrapper-scroll-y
+                            my-custom-scrollbar" style="display: flex; flex-direction: column-reverse;">
+
+                <table class="table table-bordered table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Item</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+
+                        {% for item in order.item.all %}
+                        <tr>
+                            <th scope="row">{{item}}
+                                {% if order.item_topping.all %}<small><small>+
+                                        {% for topping in order.item_topping.all%}
+                                        {{topping}}{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </small></small>{% endif %}</th>
+                            <td>{{order.qty}}</td>
+                            <td>${{order.amount}}</td>
+                            <td>
+                                <form action="{% url 'delete_item' %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="item_id" value="{{order.id}}"><button type="submit"
+                                        class="btn"><i class="bi bi-cart-dash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+
+
+
+                        {% endfor %}
+
+                        {% endfor %}
+                        <tr>
+                            <td></td>
+                            <td colspan="2">
+                                <hr> <b style="font-size:large;">Total: ${{ total }}</b>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+
+
+            <hr>
+
+            <span class="float-right">
+                <button type="button" class="btn btn-warning btn-lg" data-toggle="modal" data-target="#checkout">
+                    Generate Order
+                </button>
+
+                <div class="modal fade" id="checkout" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">Confirm Order</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <center>
+                                    <table>
+
+                                        <th>Item</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                        {% for order in orders %}
+
+
+
+
+                                        {% for item in order.item.all %}
+
+                                        <tr>
+                                            <td scope="row">{{item}}</th>
+                                            <td>{{order.qty}}</td>
+                                            <td>${{order.amount}}</td>
+                                        </tr>
+
+                                        {% if order.item_topping.all %}
+                                        <tr>
+
+                                            <td colspan="3"><small><small>+ {% for topping in order.item_topping.all %}
+                                                        {{topping|join:" // "}} {% if not forloop.last %}, {% endif %}
+                                                        {% endfor %}</small></small></td>
+                                        </tr>
+                                        {% endif %}
+
+
+                                        {% endfor %}
+
+                                        {% endfor %}
+                                    </table>
+                                </center>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <form action="{% url 'confirm_order' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" value="{{total}}" id="amount" name="amount">
+
+                                    <button type="submit" class="btn btn-success">Order Now: ${{total}}</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </span>
+
+        </div>
+    </div>
+    {% else %}
+    <span class="p-5" style='font-size:20px;'>Your cart is empty</span>
+    {% endif %}
+</div>
+
+{% endblock %}

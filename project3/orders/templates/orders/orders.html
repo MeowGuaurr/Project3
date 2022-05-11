@@ -1,0 +1,127 @@
+{% extends "orders/base.html" %}
+
+{% block title %}
+My Orders
+{% endblock %}
+
+{% block body %}
+<h2 class="text-center">Orders</h2>
+
+<div class="card-body">
+    <div class="card-text">
+        <div class="table-wrapper-scroll-y
+                            my-custom-scrollbar" style="display: flex; flex-direction: column-reverse;">
+
+            <table class="table table-bordered table-striped mb-0">
+                <thead>
+                    <tr>
+                        <th scope="col"># Order</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Details</th>
+                    </tr>
+                </thead>
+                {% if not user.is_staff %}
+                <tbody>
+                    {% for order in orders %}
+
+                    <tr>
+                        <td>{{order.id}}</td>
+                        <td>{{order.date}}</td>
+                        <td>
+                            {{order.status}} {% if order.status == 'Initiated'%}{% endif %}{%if order.status == 'Completed'%}✅{% endif %}
+                        </td>
+                        <td>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-outline-warning btn-sm" data-toggle="modal" data-target="#{{order.id}}">
+                                <i class="bi bi-caret-up-square"></i>
+                            </button>
+                        </td>
+                    </tr>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="{{order.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Order Details</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            {{order.order_detail}}
+                                            <p class="text-center"><b>Total Paid:</b> ${{order.total}}</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    {% endfor %}
+                </tbody>
+
+                {% else %}
+
+                <tbody>
+                    {% for order in admin_orders %}
+
+                    <tr>
+                        <td>{{order.id}}</td>
+                        <td>{{order.date}}</td>
+                        <td>
+                            {{order.status}}
+                            <form action="{% url 'check_order' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="completed" value="{{order.id}}"><button type="submit" class="btn btn-outline-success btn-sm">Mark as completed</button>
+                            </form>
+
+                        </td>
+                        <td>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-outline-warning btn-sm" data-toggle="modal"
+                                data-target="#{{order.id}}">
+                                <i class="bi bi-caret-up-square"></i>
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="{{order.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Order of {{order.user}}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    {{order.order_detail}}
+                                    <p class="text-center"><b>Total Paid:</b> ${{order.total}}</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div>
+                        <br>
+                        <h2 class="text-center">No orders</h2>
+                        <br>
+                    </div>
+
+                    {% endfor %}
+                </tbody>
+
+                {% endif %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

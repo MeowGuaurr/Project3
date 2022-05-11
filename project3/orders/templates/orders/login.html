@@ -1,0 +1,30 @@
+{% extends "orders/base.html" %}
+
+{% block title %}
+Log in
+{% endblock %}
+
+{% block body %}
+<div class="logform"><h1>Log in</h1></div>
+    <div class="main">
+        <form action="{% url 'login' %}" method="POST">
+        {% csrf_token %}
+            <div id="name">
+                <h2 class="name">Username</h2>
+                <input class="first-name" type="text" name="username"><br>
+                <label class="firstlabel">first name</label>
+            </div>
+
+            <h2 class="name">Password</h2>
+            <input class="password" type="password" name="password">
+            <!-- <label class="passlabel">Password</label> -->
+
+            <input class="button" type="submit" value="Login">
+        </form>
+
+        <h3 class="reg">Not registered? <a href="{% url 'register' %}">Click here!</a></h2>
+
+        <!--<input class="button" href="{% url 'register' %} value="Register"> -->
+</div>
+
+{% endblock %}
